@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>XogentWingetUpdater</AssemblyName>
+    <RootNamespace>XogentWingetUpdater</RootNamespace>
+    <Version>1.0.0</Version>
+    <Authors>XOGENT, INC</Authors>
+    <Company>XOGENT, INC</Company>
+    <Product>XOGENT Winget Auto-Updater</Product>
+    <Copyright>Copyright © XOGENT, INC 2024</Copyright>
+    <Description>Automatically updates all software via winget on system boot. Security-focused IT solution by XOGENT, INC.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\logo.png" />
+    <Resource Include="Resources\Styles.xaml" />
+  </ItemGroup>
+
+</Project>
+

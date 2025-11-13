@@ -1,0 +1,325 @@
+<Window x:Class="XogentWingetUpdater.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="XOGENT Winget Auto-Updater"
+        Height="500"
+        Width="700"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ResizeMode="NoResize"
+        ShowInTaskbar="True"
+        Topmost="False"
+        WindowStartupLocation="CenterScreen"
+        Opacity="0">
+
+    <Window.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+        </Style>
+
+        <!-- Fade In Animation -->
+        <Storyboard x:Key="FadeInAnimation">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                           From="0" To="1" Duration="0:0:0.4"
+                           AccelerationRatio="0.2" DecelerationRatio="0.4"/>
+        </Storyboard>
+
+        <!-- Pulse Animation for Status Icon -->
+        <Storyboard x:Key="PulseAnimation" RepeatBehavior="Forever">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                           From="1" To="0.5" Duration="0:0:1"
+                           AutoReverse="True"/>
+        </Storyboard>
+    </Window.Resources>
+
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="Window.Loaded">
+            <BeginStoryboard Storyboard="{StaticResource FadeInAnimation}"/>
+        </EventTrigger>
+    </Window.Triggers>
+    
+    <Border CornerRadius="16"
+            Background="#0a1929"
+            BorderThickness="2"
+            BorderBrush="#1565c0">
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="30"
+                              ShadowDepth="8"
+                              Opacity="0.6"
+                              Color="Black"/>
+        </Border.Effect>
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Enhanced Header with gradient -->
+            <Border Grid.Row="0"
+                    CornerRadius="16,16,0,0"
+                    Height="100">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#1976d2" Offset="0"/>
+                        <GradientStop Color="#0d47a1" Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Company Logo -->
+                    <Border Grid.Column="0"
+                            Width="70" Height="70"
+                            CornerRadius="12"
+                            Background="White"
+                            Margin="20,0,0,0"
+                            VerticalAlignment="Center"
+                            Padding="8">
+                        <Image Source="Resources/logo.png"
+                               Stretch="Uniform"
+                               RenderOptions.BitmapScalingMode="HighQuality"/>
+                    </Border>
+
+                    <!-- Title Section -->
+                    <StackPanel Grid.Column="1"
+                                VerticalAlignment="Center"
+                                Margin="20,0,0,0">
+                        <TextBlock Text="XOGENT"
+                                   FontSize="36"
+                                   FontWeight="Bold"
+                                   Foreground="White"
+                                   Margin="0,0,0,4"/>
+                        <TextBlock Text="Winget Auto-Updater • Enterprise Security Solution"
+                                   FontSize="13"
+                                   FontWeight="Normal"
+                                   Foreground="#90caf9"
+                                   Opacity="0.95"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+            
+            <!-- Enhanced Main Content -->
+            <Grid Grid.Row="1" Margin="35,25,35,25">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="15"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="15"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Status Section with Icon -->
+                <Border Grid.Row="0"
+                        Background="#0d1f2d"
+                        CornerRadius="10"
+                        Padding="20,15">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Status Icon -->
+                        <Viewbox Grid.Column="0"
+                                 Width="28" Height="28"
+                                 VerticalAlignment="Center"
+                                 Margin="0,0,15,0">
+                            <TextBlock x:Name="StatusIcon"
+                                       Text="⟳"
+                                       FontSize="28"
+                                       Foreground="#42a5f5"
+                                       RenderTransformOrigin="0.5,0.5">
+                                <TextBlock.RenderTransform>
+                                    <RotateTransform x:Name="IconRotate" Angle="0"/>
+                                </TextBlock.RenderTransform>
+                            </TextBlock>
+                        </Viewbox>
+
+                        <!-- Status Text -->
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <TextBlock x:Name="StatusText"
+                                       Text="Initializing updates..."
+                                       FontSize="18"
+                                       FontWeight="SemiBold"
+                                       Foreground="#e3f2fd"
+                                       TextWrapping="Wrap"/>
+                            <TextBlock x:Name="SubStatusText"
+                                       Text="Preparing system..."
+                                       FontSize="12"
+                                       Foreground="#90caf9"
+                                       Opacity="0.8"
+                                       Margin="0,4,0,0"/>
+                        </StackPanel>
+
+                        <!-- Package Counter -->
+                        <Border Grid.Column="2"
+                                Background="#1565c0"
+                                CornerRadius="8"
+                                Padding="12,8"
+                                VerticalAlignment="Center">
+                            <TextBlock x:Name="PackageCounter"
+                                       Text="0/0"
+                                       FontSize="14"
+                                       FontWeight="Bold"
+                                       Foreground="White"/>
+                        </Border>
+                    </Grid>
+                </Border>
+
+                <!-- Progress Bar with Percentage -->
+                <Grid Grid.Row="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="8"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Percentage Label -->
+                    <TextBlock x:Name="PercentageText"
+                               Grid.Row="0"
+                               Text="0%"
+                               FontSize="11"
+                               FontWeight="SemiBold"
+                               Foreground="#64b5f6"
+                               HorizontalAlignment="Right"
+                               Margin="0,0,0,4"/>
+
+                    <!-- Enhanced Progress Bar -->
+                    <Border Grid.Row="1"
+                            Background="#1a2a3a"
+                            CornerRadius="4"
+                            BorderThickness="1"
+                            BorderBrush="#0d47a1">
+                        <ProgressBar x:Name="UpdateProgressBar"
+                                     Height="8"
+                                     IsIndeterminate="True"
+                                     Foreground="#42a5f5"
+                                     Background="Transparent"
+                                     BorderThickness="0">
+                            <ProgressBar.Style>
+                                <Style TargetType="ProgressBar">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="ProgressBar">
+                                                <Grid>
+                                                    <Border x:Name="PART_Track"
+                                                            CornerRadius="4"
+                                                            Background="Transparent"/>
+                                                    <Border x:Name="PART_Indicator"
+                                                            CornerRadius="4"
+                                                            HorizontalAlignment="Left">
+                                                        <Border.Background>
+                                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                                <GradientStop Color="#42a5f5" Offset="0"/>
+                                                                <GradientStop Color="#1976d2" Offset="1"/>
+                                                            </LinearGradientBrush>
+                                                        </Border.Background>
+                                                    </Border>
+                                                </Grid>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </ProgressBar.Style>
+                        </ProgressBar>
+                    </Border>
+                </Grid>
+
+                <!-- Current Package Info -->
+                <Border Grid.Row="4"
+                        Background="#0d1f2d"
+                        CornerRadius="8"
+                        Padding="15,12">
+                    <TextBlock x:Name="CurrentPackageText"
+                               Text="Preparing to check for updates..."
+                               FontSize="13"
+                               Foreground="#90caf9"
+                               TextWrapping="Wrap"/>
+                </Border>
+
+                <!-- Progress Details Log -->
+                <Border Grid.Row="6"
+                        Background="#0a0f14"
+                        CornerRadius="8"
+                        BorderThickness="1"
+                        BorderBrush="#1a2a3a">
+                    <ScrollViewer x:Name="ProgressScrollViewer"
+                                  VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Disabled"
+                                  Padding="15,10">
+                        <TextBlock x:Name="ProgressDetails"
+                                   TextWrapping="Wrap"
+                                   FontSize="11"
+                                   FontFamily="Consolas"
+                                   Foreground="#78909c"
+                                   LineHeight="18"
+                                   Text="Initializing update system..."/>
+                    </ScrollViewer>
+                </Border>
+            </Grid>
+            
+            <!-- Enhanced Footer -->
+            <Border Grid.Row="2"
+                    Height="60"
+                    CornerRadius="0,0,16,16">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                        <GradientStop Color="#0a0f14" Offset="0"/>
+                        <GradientStop Color="#050a0f" Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+                <Grid Margin="25,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Footer Info -->
+                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                        <TextBlock x:Name="FooterText"
+                                   Text="This window will close automatically when complete"
+                                   FontSize="11"
+                                   Foreground="#546e7a"
+                                   Margin="0,0,0,3"/>
+                        <TextBlock x:Name="FooterSubText"
+                                   Text="Logs: %LOCALAPPDATA%\XOGENT\WingetUpdater\logs\"
+                                   FontSize="9"
+                                   FontFamily="Consolas"
+                                   Foreground="#455a64"
+                                   Opacity="0.8"/>
+                    </StackPanel>
+
+                    <!-- Company Badge -->
+                    <Border Grid.Column="1"
+                            Background="#0d47a1"
+                            CornerRadius="6"
+                            Padding="12,6"
+                            VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="●"
+                                       FontSize="10"
+                                       Foreground="#4fc3f7"
+                                       VerticalAlignment="Center"
+                                       Margin="0,0,6,0"/>
+                            <TextBlock Text="XOGENT"
+                                       FontSize="11"
+                                       FontWeight="Bold"
+                                       Foreground="#90caf9"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Border>
+        </Grid>
+    </Border>
+</Window>
+

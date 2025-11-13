@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  
+  <Product Id="*"
+           Name="XOGENT Winget Auto-Updater"
+           Language="1033"
+           Version="1.0.0"
+           Manufacturer="XOGENT, INC"
+           UpgradeCode="A1B2C3D4-E5F6-4A5B-8C9D-0E1F2A3B4C5D">
+
+    <Package InstallerVersion="200"
+             Compressed="yes"
+             InstallScope="perMachine"
+             Description="Automatically updates software via winget on Windows boot. Enterprise security solution by XOGENT, INC - (678) 208-8866"
+             Manufacturer="XOGENT, INC"
+             Comments="XOGENT, INC - Security, Compliance, and Managed IT Services - www.xogent.com"/>
+    
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    
+    <MediaTemplate />
+    
+    <!-- Install to Program Files -->
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="XOGENTFOLDER" Name="XOGENT">
+          <Directory Id="INSTALLFOLDER" Name="WingetUpdater">
+            <Component Id="ApplicationFiles" Guid="*">
+              <File Id="WingetUpdaterExe"
+                    Source="..\WingetUpdater\bin\Release\net8.0-windows\XogentWingetUpdater.exe"
+                    KeyPath="yes"/>
+            </Component>
+          </Directory>
+        </Directory>
+      </Directory>
+      <Directory Id="SystemFolder"/>
+    </Directory>
+    
+    <!-- Features -->
+    <Feature Id="ProductFeature" Title="XOGENT Winget Auto-Updater" Level="1">
+      <ComponentRef Id="ApplicationFiles" />
+    </Feature>
+    
+    <!-- Custom Actions for Scheduled Task using schtasks.exe -->
+    <CustomAction Id="CreateScheduledTask"
+                  Directory="SystemFolder"
+                  Execute="deferred"
+                  Impersonate="no"
+                  Return="check"
+                  ExeCommand='cmd.exe /c schtasks /Create /TN "XogentWingetUpdater" /TR &quot;[INSTALLFOLDER]XogentWingetUpdater.exe&quot; /SC ONSTART /RL HIGHEST /F'
+                  />
+    
+    <CustomAction Id="RemoveScheduledTask"
+                  Directory="SystemFolder"
+                  Execute="deferred"
+                  Impersonate="no"
+                  Return="ignore"
+                  ExeCommand='cmd.exe /c schtasks /Delete /TN "XogentWingetUpdater" /F'
+                  />
+    
+    <!-- Install Sequence -->
+    <InstallExecuteSequence>
+      <Custom Action="CreateScheduledTask" After="InstallFiles">NOT Installed</Custom>
+      <Custom Action="RemoveScheduledTask" After="RemoveFiles">REMOVE="ALL"</Custom>
+    </InstallExecuteSequence>
+    
+    <!-- UI -->
+    <UIRef Id="WixUI_Minimal" />
+    
+  </Product>
+</Wix>
